@@ -31,11 +31,12 @@ export default function VinLookup() {
   };
 
   const filteredData = data.filter((item) => {
-    const val = item.Value?.trim().toLowerCase();
+    const rawVal = item.Value || "";
+    const val = rawVal.trim().toLowerCase();
     const label = item.Variable?.trim().toLowerCase() || "";
 
     const excludedValues = new Set([
-      "n/a", "not applicable", "null", "na", "n.a.", "-", "n.a", "none"
+      "", "n/a", "not applicable", "null", "na", "n.a.", "-", "n.a", "none"
     ]);
 
     const excludedLabels = new Set([
@@ -43,7 +44,7 @@ export default function VinLookup() {
       "other motorcycle info", "other battery info", "pretensioner"
     ]);
 
-    return val && !excludedValues.has(val) && !excludedLabels.has(label);
+    return !excludedValues.has(val) && !excludedLabels.has(label);
   });
 
   return (
