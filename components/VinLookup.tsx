@@ -71,11 +71,12 @@ export default function VinLookup() {
                 .filter(
                   (item) =>
                     item.Value &&
-                    item.Value !== "Not Applicable" &&
-                    item.Value !== "N/A" &&
-                    item.Value !== "null" &&
+                    item.Value.trim().toLowerCase() !== "n/a" &&
+                    item.Value.trim().toLowerCase() !== "not applicable" &&
+                    item.Value.trim().toLowerCase() !== "null" &&
                     item.Value.trim() !== ""
                 )
+                
                 
                 .map((item, idx) => (
                   <tr key={idx}>
