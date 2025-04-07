@@ -30,25 +30,22 @@ export default function VinLookup() {
     }
   };
 
-  // Normalization function to clean and lowercase text
-  const normalize = (str: string | null | undefined): string => {
-    return (str || "").replace(/\s+/g, " ").trim().toLowerCase();
-  };
+  const normalize = (str: string | null | undefined): string =>
+    (str || "").replace(/\s+/g, " ").trim().toLowerCase();
 
   const excludedValues = new Set([
     "", "n/a", "not applicable", "null", "na", "n.a.", "-", "n.a", "none"
   ]);
 
-  const excludedLabels = new Set([
-    "note", "series2", "trim2", "suggested vin", "other trailer info",
-    "other motorcycle info", "other battery info", "pretensioner"
-  ]);
+  const sortedData = [...data].sort((a, b) => {
+    const aVal = normalize(a.Value);
+    const bVal = normalize(b.Value);
+    const aIsJunk = excludedValues.has(aVal);
+    const bIsJunk = excludedValues.has(bVal);
 
-  const filteredData = data.filter((item) => {
-    const val = normalize(item.Value);
-    const label = normalize(item.Variable);
-
-    return !excludedValues.has(val) && !excludedLabels.has(label);
+    if (aIsJunk && !bIsJunk) return 1;
+    if (!aIsJunk && bIsJunk) return -1;
+    return 0;
   });
 
   return (
@@ -64,13 +61,7 @@ export default function VinLookup() {
           className="px-4 py-2 border rounded w-full"
         />
         <button
-          onClick={() => {
-            if (vin.length < 5) {
-              setError("Please enter a valid VIN (at least 5 characters)");
-              return;
-            }
-            window.open(`/vehicle-details?vin=${vin}`, "_blank");
-          }}
+          onClick={handleLookup}
           className="bg-blue-600 text-white px-4 py-2 rounded"
         >
           Lookup
@@ -80,7 +71,7 @@ export default function VinLookup() {
       {loading && <p className="text-blue-600">Loading...</p>}
       {error && <p className="text-red-600">{error}</p>}
 
-      {filteredData.length > 0 && (
+      {sortedData.length > 0 && (
         <div className="bg-white rounded shadow p-4 mt-4 max-h-[500px] overflow-auto">
           <table className="w-full text-sm">
             <thead>
@@ -90,10 +81,17 @@ export default function VinLookup() {
               </tr>
             </thead>
             <tbody>
-              {filteredData.map((item, idx) => (
-                <tr key={idx}>
+              {sortedData.map((item, idx) => (
+                <tr
+                  key={idx}
+                  className={
+                    excludedValues.has(normalize(item.Value))
+                      ? "text-gray-400"
+                      : ""
+                  }
+                >
                   <td className="border-b p-2 font-medium">{item.Variable}</td>
-                  <td className="border-b p-2">{item.Value}</td>
+                  <td className="border-b p-2">{item.Value || "—"}</td>
                 </tr>
               ))}
             </tbody>
