@@ -68,7 +68,15 @@ export default function VinLookup() {
             </thead>
             <tbody>
               {data
-                .filter((item) => item.Value && item.Value !== "Not Applicable")
+                .filter(
+                  (item) =>
+                    item.Value &&
+                    item.Value !== "Not Applicable" &&
+                    item.Value !== "N/A" &&
+                    item.Value !== "null" &&
+                    item.Value.trim() !== ""
+                )
+                
                 .map((item, idx) => (
                   <tr key={idx}>
                     <td className="border-b p-2 font-medium">{item.Variable}</td>
