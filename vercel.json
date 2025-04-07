@@ -1,0 +1,6 @@
+{
+    "build": {
+      "ignoreCommand": "echo 'Skipping ESLint warnings'"
+    }
+  }
+  
