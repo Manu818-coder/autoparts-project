@@ -30,19 +30,23 @@ export default function VinLookup() {
     }
   };
 
+  // Normalization function to clean and lowercase text
+  const normalize = (str: string | null | undefined): string => {
+    return (str || "").replace(/\s+/g, " ").trim().toLowerCase();
+  };
+
+  const excludedValues = new Set([
+    "", "n/a", "not applicable", "null", "na", "n.a.", "-", "n.a", "none"
+  ]);
+
+  const excludedLabels = new Set([
+    "note", "series2", "trim2", "suggested vin", "other trailer info",
+    "other motorcycle info", "other battery info", "pretensioner"
+  ]);
+
   const filteredData = data.filter((item) => {
-    const rawVal = item.Value || "";
-    const val = rawVal.trim().toLowerCase();
-    const label = item.Variable?.trim().toLowerCase() || "";
-
-    const excludedValues = new Set([
-      "", "n/a", "not applicable", "null", "na", "n.a.", "-", "n.a", "none"
-    ]);
-
-    const excludedLabels = new Set([
-      "note", "series2", "trim2", "suggested vin", "other trailer info",
-      "other motorcycle info", "other battery info", "pretensioner"
-    ]);
+    const val = normalize(item.Value);
+    const label = normalize(item.Variable);
 
     return !excludedValues.has(val) && !excludedLabels.has(label);
   });
@@ -50,7 +54,7 @@ export default function VinLookup() {
   return (
     <div className="max-w-4xl mx-auto p-4">
       <h2 className="text-2xl font-bold mb-4">VIN Lookup</h2>
-      
+
       <div className="flex gap-2 mb-4">
         <input
           type="text"
