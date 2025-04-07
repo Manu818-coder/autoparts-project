@@ -68,14 +68,11 @@ export default function VinLookup() {
             </thead>
             <tbody>
               {data
-                .filter(
-                  (item) =>
-                    item.Value &&
-                    item.Value.trim().toLowerCase() !== "n/a" &&
-                    item.Value.trim().toLowerCase() !== "not applicable" &&
-                    item.Value.trim().toLowerCase() !== "null" &&
-                    item.Value.trim() !== ""
-                )
+                .filter((item) => {
+                  const val = item.Value?.trim().toLowerCase();
+                  return val && !["n/a", "not applicable", "null", "na", "n.a.", "-"].includes(val);
+                })
+                
                 
                 
                 .map((item, idx) => (
