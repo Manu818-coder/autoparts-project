@@ -1,6 +1,8 @@
 {
     "build": {
-      "ignoreCommand": "echo 'Skipping ESLint warnings'"
+      "env": {
+        "NEXT_IGNORE_ESLINT": "true"
+      }
     }
   }
   
